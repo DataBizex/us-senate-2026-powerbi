@@ -1,0 +1,294 @@
+// ================================================================
+// US Senate 2026 - DAX measures
+// Put every measure in the _Measures table.
+// RULE OF THE MODEL: a measure that can appear in a headline number
+// filters RaceQualityFlags[headline_eligible] = "Y".
+// Three races qualify today: Texas, Virginia, Wyoming.
+// Montana is excluded everywhere by its source_integrity_flag.
+// ================================================================
+
+// ---------------- 1. COVERAGE AND STATUS ----------------
+
+Races Total = DISTINCTCOUNT ( DimRace[race_id] )
+
+Races With Count =
+CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
+    FactRaceResult[leading_candidate_name] <> "" )
+
+Races Official Source =
+CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
+    FactRaceResult[official_count_status] = "Published" )
+
+Races Pending =
+CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
+    FactRaceResult[leading_candidate_name] = "" )
+
+Races Certified =
+CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
+    FactRaceResult[certification_status] = "Certified" )
+// Returns 0. No state had certified at collection time. Keep it on the page:
+// a visible zero is the point.
+
+Races Headline Eligible =
+CALCULATE ( DISTINCTCOUNT ( RaceQualityFlags[race_id] ),
+    RaceQualityFlags[headline_eligible] = "Y" )
+
+Coverage Label =
+VAR c = [Races With Count]
+VAR o = [Races Official Source]
+RETURN
+    FORMAT ( c, "0" ) & " of " & FORMAT ( [Races Total], "0" ) & " races have a count, "
+    & FORMAT ( o, "0" ) & " from the state election authority. "
+    & FORMAT ( [Races Certified], "0" ) & " are certified."
+
+// ---------------- 2. SEATS AND FLIPS ----------------
+// Party of record = the leading candidate where a count exists,
+// otherwise the projected winner. Never invented.
+
+Seats Leading D =
+CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
+    FILTER ( FactRaceResult,
+        COALESCE ( FactRaceResult[leading_candidate_party],
+                   FactRaceResult[projected_winner_party] ) = "D" ) )
+
+Seats Leading R =
+CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
+    FILTER ( FactRaceResult,
+        COALESCE ( FactRaceResult[leading_candidate_party],
+                   FactRaceResult[projected_winner_party] ) = "R" ) )
+
+Seats Not Up D Caucus = 34
+// Democratic-caucus seats not contested in 2026: 45 D + 2 I - 13 D seats up.
+// Hard constant, documented on the methodology page. Change it only with a source.
+
+Projected D Caucus Total = [Seats Not Up D Caucus] + [Seats Leading D]
+
+Projected Flips =
+CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
+    FactRaceResult[flip_flag] = "Y" )
+
+Seats Caveat =
+"Seat counts mix official counts, aggregator counts and media projections. "
+& FORMAT ( [Races Pending], "0" ) & " races are undecided. Nothing is certified."
+
+// ---------------- 3. VOTES AND MARGINS ----------------
+// Headline margin measures NEVER include partial, aggregator or flagged counts.
+
+Total Votes Counted = SUM ( FactRaceResult[race_total_votes] )
+// Sums only races that published a total. Not national turnout. Label it as such.
+
+Margin Votes Headline =
+CALCULATE ( SUM ( FactRaceResult[margin_votes] ),
+    RaceQualityFlags[headline_eligible] = "Y" )
+
+Margin Pct Headline =
+CALCULATE ( AVERAGE ( FactRaceResult[margin_pct] ),
+    RaceQualityFlags[headline_eligible] = "Y" )
+
+Closest Margin Pct =
+CALCULATE (
+    MIN ( FactRaceResult[margin_pct] ),
+    RaceQualityFlags[headline_eligible] = "Y" )
+// Needs the DimRace <-> RaceQualityFlags relationship set to filter BOTH directions,
+// otherwise the flag cannot reach FactRaceResult. See the relationship table.
+
+Margin Rank Note =
+VAR n = [Races Headline Eligible]
+RETURN
+    "Margin ranking covers only the " & FORMAT ( n, "0" )
+    & " races with a complete count from the state election authority. "
+    & "Partial counts, aggregator counts and the Montana source are excluded."
+
+Margin Display =
+// Use this instead of the raw column on any visual a reader might quote.
+VAR safe = SELECTEDVALUE ( RaceQualityFlags[headline_eligible] )
+RETURN
+    IF ( safe = "Y",
+        FORMAT ( SELECTEDVALUE ( FactRaceResult[margin_pct] ), "0.0" ) & "%",
+        "Not reportable" )
+
+// ---------------- 4. SOURCE STATUS AND TIMESTAMP ----------------
+// Condition: every result on screen carries its status and when it was last updated.
+
+Result Status Display = SELECTEDVALUE ( RaceQualityFlags[evidence_status] )
+// Projected / Unofficial / Official / Pending. Certified never appears yet.
+
+Source Status Line =
+VAR st  = SELECTEDVALUE ( RaceQualityFlags[status_label_display] )
+VAR upd = SELECTEDVALUE ( RaceQualityFlags[last_updated_display] )
+VAR tier = SELECTEDVALUE ( RaceQualityFlags[count_source_tier] )
+RETURN st & "  |  " & tier & "  |  last updated " & upd
+
+Last Updated Display = SELECTEDVALUE ( RaceQualityFlags[last_updated_display] )
+
+Certification Display =
+"Certification: " & SELECTEDVALUE ( FactRaceResult[certification_status] )
+
+Exclusion Reason = SELECTEDVALUE ( RaceQualityFlags[exclusion_reason] )
+
+// ---------------- 5. DATA QUALITY INDICATOR ----------------
+
+Quality Tier 1 Count = CALCULATE ( DISTINCTCOUNT ( RaceQualityFlags[race_id] ), RaceQualityFlags[quality_rank] = 1 )
+Quality Tier 2 Count = CALCULATE ( DISTINCTCOUNT ( RaceQualityFlags[race_id] ), RaceQualityFlags[quality_rank] = 2 )
+Quality Tier 3 Count = CALCULATE ( DISTINCTCOUNT ( RaceQualityFlags[race_id] ), RaceQualityFlags[quality_rank] = 3 )
+Quality Tier 4 Count = CALCULATE ( DISTINCTCOUNT ( RaceQualityFlags[race_id] ), RaceQualityFlags[quality_rank] = 4 )
+
+Data Quality Score =
+DIVIDE ( [Quality Tier 1 Count], [Races Total] )
+// Share of races resting on a complete official count. Shown as a percentage.
+
+Data Quality Banner =
+"Complete official: " & [Quality Tier 1 Count]
+& "   |   Incomplete or unofficial: " & [Quality Tier 2 Count]
+& "   |   Partial or flagged: " & [Quality Tier 3 Count]
+& "   |   No count: " & [Quality Tier 4 Count]
+
+Quality Color Hex =
+SWITCH ( SELECTEDVALUE ( RaceQualityFlags[quality_color] ),
+    "Green", "#15803D",
+    "Amber", "#D97706",
+    "Red",   "#BE123C",
+    "#64748B" )
+// Apply under Format > Cell elements > Background colour > Field value.
+
+Integrity Flag Count =
+CALCULATE ( DISTINCTCOUNT ( RaceQualityFlags[race_id] ),
+    RaceQualityFlags[source_integrity_flag] = "Y" )
+
+// ---------------- 6. OBSERVATION HISTORY ----------------
+// The append-only record. Read it, never write over it.
+
+Observation Count = DISTINCTCOUNT ( FactResultObservation[observation_id] )
+
+Observation Rounds = DISTINCTCOUNT ( FactResultObservation[observed_at] )
+
+Latest Observed Votes =
+VAR official =
+    CALCULATE ( SUM ( FactResultObservation[candidate_votes] ),
+        FactResultObservation[source_tier] = "Official state election authority" )
+VAR aggregator =
+    CALCULATE ( SUM ( FactResultObservation[candidate_votes] ),
+        FactResultObservation[source_tier] = "Media aggregator" )
+RETURN COALESCE ( official, aggregator )
+// Prefers the official observation explicitly. Do not rely on alphabetical
+// sorting of source_tier: "Media aggregator" sorts BEFORE "Official...".
+
+Observation Delta =
+// How much an official count changed an earlier aggregator observation.
+VAR off = CALCULATE ( SUM ( FactResultObservation[candidate_votes] ),
+            FactResultObservation[source_tier] = "Official state election authority" )
+VAR agg = CALCULATE ( SUM ( FactResultObservation[candidate_votes] ),
+            FactResultObservation[source_tier] = "Media aggregator" )
+RETURN IF ( off > 0 && agg > 0, off - agg )
+
+// ---------------- 7. CANDIDATE FINANCE ----------------
+// FEC candidate-level totals. What they are and are not is on the page itself.
+
+Total Receipts = SUM ( FactCandidateFinance[total_receipts] )
+
+Receipts Excl Internal Transfers = SUM ( FactCandidateFinance[receipts_excl_internal_transfers] )
+// Preferred for comparing candidates: removes money moved in from the
+// candidate's own authorized committees.
+
+Total Disbursements = SUM ( FactCandidateFinance[total_disbursements] )
+Cash On Hand        = SUM ( FactCandidateFinance[cash_on_hand_end] )
+Individual Receipts = SUM ( FactCandidateFinance[individual_contributions] )
+Committee Receipts  = SUM ( FactCandidateFinance[other_committee_contributions] )
+Party Receipts      = SUM ( FactCandidateFinance[party_committee_contributions] )
+Self Funding        = SUM ( FactCandidateFinance[candidate_self_contributions] )
+Internal Transfers  = SUM ( FactCandidateFinance[transfers_from_own_auth_committees] )
+
+Filers In Cohort = DISTINCTCOUNT ( FactCandidateFinance[fec_cand_id] )
+
+Cohort Count = DISTINCTCOUNT ( FactCandidateFinance[comparability_cohort] )
+
+Finance Comparability Warning =
+IF ( [Cohort Count] > 1,
+    "⚠ " & [Cohort Count] & " different reporting periods are in view. "
+    & "Totals are NOT comparable between candidates. Pick one period in the slicer.",
+    "Single reporting period in view: " & SELECTEDVALUE ( FactCandidateFinance[comparability_cohort] )
+    & ". Totals are comparable." )
+
+Finance Scope Note =
+"FEC candidate-level totals. They INCLUDE all of the candidate's authorized committees, "
+& "already aggregated by the FEC. They EXCLUDE leadership PACs, party committees and "
+& "independent expenditures, which are not the candidate's money. "
+& "Internal transfers between a candidate's own committees total "
+& FORMAT ( [Internal Transfers], "$#,##0" )
+& " in view; use [Receipts Excl Internal Transfers] to remove them."
+
+Receipts Winners =
+CALCULATE ( [Receipts Excl Internal Transfers],
+    FactCandidateResult[is_leading_candidate] = "Y" )
+
+Top Funded Won Pct =
+VAR leaders =
+    FILTER (
+        SUMMARIZE ( DimCandidate, DimRace[race_id], DimCandidate[receipts_rank_in_race] ),
+        CALCULATE ( MAX ( DimCandidate[is_leading_candidate] ) ) = "Y" )
+RETURN
+    DIVIDE (
+        COUNTROWS ( FILTER ( leaders, DimCandidate[receipts_rank_in_race] = 1 ) ),
+        COUNTROWS ( leaders ) )
+// Uses DimCandidate[is_leading_candidate], which exists on the dimension.
+// Filtering the fact table would not propagate back up to the dimension.
+
+// ---------------- 8. FORECAST PAGE - DISABLED ----------------
+// Ratings are quarantined. These measures return BLANK on purpose so the
+// page builds and shows empty visuals rather than a plausible wrong number.
+
+Ratings Total = DISTINCTCOUNT ( FactRaceRating[rating_id] )
+
+Ratings Analysis Eligible =
+CALCULATE ( DISTINCTCOUNT ( FactRaceRating[rating_id] ),
+    FactRaceRating[analysis_eligible] = "Y" )
+
+Forecast Hit Rate =
+IF (
+    [Ratings Analysis Eligible] = 0,
+    BLANK (),
+    VAR scored =
+        FILTER (
+            SUMMARIZE ( FactRaceRating, FactRaceRating[rating_id], DimRace[race_id] ),
+            CALCULATE ( MAX ( FactRaceRating[analysis_eligible] ) ) = "Y"
+                && CALCULATE ( MAX ( FactRaceRating[rating_score_dem_positive] ) ) <> 0
+                && CALCULATE ( MAX ( FactRaceResult[leading_candidate_party] ) ) <> "" )
+    VAR hits =
+        FILTER ( scored,
+            VAR sc = CALCULATE ( MAX ( FactRaceRating[rating_score_dem_positive] ) )
+            VAR wp = CALCULATE ( MAX ( FactRaceResult[leading_candidate_party] ) )
+            RETURN ( sc > 0 && wp = "D" ) || ( sc < 0 && wp = "R" ) )
+    RETURN DIVIDE ( COUNTROWS ( hits ), COUNTROWS ( scored ) ) )
+// Guarded: with zero eligible ratings it never evaluates the body, so the page
+// shows blank visuals rather than a plausible but unfounded number.
+// FactRaceRating and FactRaceResult are joined through DimRace, never directly:
+// RELATED() between two fact tables would not validate.
+
+Forecast Availability =
+IF ( [Ratings Analysis Eligible] = 0,
+    "FORECAST ANALYSIS UNAVAILABLE — all " & FORMAT ( [Ratings Total], "0" )
+    & " ratings are quarantined. None could be verified at its publisher and three are "
+    & "contradicted by a later source. This page will populate once ratings are "
+    & "re-collected and analysis_eligible is set to Y.",
+    "Forecast analysis available on " & FORMAT ( [Ratings Analysis Eligible], "0" ) & " verified ratings." )
+
+// ---------------- 9. ACS PAGE - AWAITING DATA ----------------
+
+ACS Availability =
+"DEMOGRAPHIC LAYER AWAITING DATA — the ACS 2020-2024 tables are not loaded. "
+& "Run the supplied refresh script with a free Census API key. "
+& "When loaded these figures will be 2020-2024 five-year estimates, NOT 2026 data."
+
+ACS Row Count = 0
+// Replace with COUNTROWS ( 'ACS County' ) once the table exists.
+
+// ---------------- 10. METHODOLOGY HELPERS ----------------
+
+Unresolved Issue Count = COUNTROWS ( UnresolvedIssues )
+
+Open High Severity =
+CALCULATE ( COUNTROWS ( DataQualityChecks ), DataQualityChecks[severity] = "High" )
+
+Report Footer =
+"Data as collected 5 November 2026. Nothing on this report is a certified election result. "
+& [Data Quality Banner]

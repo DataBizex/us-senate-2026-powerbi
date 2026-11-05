@@ -1,0 +1,265 @@
+table,table_role,grain,field,field_role,data_type,unit,meaning
+DimState,Dimension,One row per US state,state_fips,Primary key,Text,-,"Two-digit state FIPS code, stored as text to preserve leading zeros."
+DimState,Dimension,One row per US state,state_postal,Attribute,Text,-,Two-letter state code.
+DimState,Dimension,One row per US state,state_name,Attribute,Text,-,Full state name. Set Data category = State or Province in Power BI for mapping.
+DimState,Dimension,One row per US state,has_2026_senate_race,Attribute,Text,-,See the source register and table notes.
+DimRace,Dimension,One row per 2026 Senate race,race_id,Primary key,Text,-,"Race key, format 2026-SEN-XX where XX is the state postal code. Primary key of DimRace."
+DimRace,Dimension,One row per 2026 Senate race,state_fips,Foreign key,Text,-,"Two-digit state FIPS code, stored as text to preserve leading zeros."
+DimRace,Dimension,One row per 2026 Senate race,state_postal,Attribute,Text,-,Two-letter state code.
+DimRace,Dimension,One row per 2026 Senate race,state_name,Attribute,Text,-,Full state name. Set Data category = State or Province in Power BI for mapping.
+DimRace,Dimension,One row per 2026 Senate race,senate_class,Attribute,Whole number,-,"Senate class of the seat (2 for the regular cycle, 3 for the two specials)."
+DimRace,Dimension,One row per 2026 Senate race,is_special_election,Attribute,Text,Y/N,Y for the Florida and Ohio special elections.
+DimRace,Dimension,One row per 2026 Senate race,election_date,Attribute,Date,-,2026-11-03 for every race.
+DimRace,Dimension,One row per 2026 Senate race,incumbent_name,Attribute,Text,-,"Sitting senator at the election, from the encyclopedia source."
+DimRace,Dimension,One row per 2026 Senate race,incumbent_party,Attribute,Text,D/R,Party of the sitting senator.
+DimRace,Dimension,One row per 2026 Senate race,incumbent_fec_cand_id,Attribute,Text,-,FEC ID of the incumbent where one was matched.
+DimRace,Dimension,One row per 2026 Senate race,incumbent_running,Attribute,Text,Y/N,"N where the incumbent retired, was defeated in a primary, or was ineligible."
+DimRace,Dimension,One row per 2026 Senate race,incumbent_status_source,Attribute,Text,-,See the source register and table notes.
+DimRace,Dimension,One row per 2026 Senate race,first_elected_or_appointed,Attribute,Text,-,See the source register and table notes.
+DimRace,Dimension,One row per 2026 Senate race,pvi_text,Attribute,Text,-,"Partisan lean as published (e.g. R+15). Context only, not a 2026 measurement."
+DimRace,Dimension,One row per 2026 Senate race,pvi_numeric_dem_positive,Attribute,Decimal,Index points,"PVI as a number, positive = Democratic lean. Use for sorting."
+DimRace,Dimension,One row per 2026 Senate race,seat_party_before,Attribute,Text,D/R,Party holding the seat before this election. Drives flip_flag.
+DimRace,Dimension,One row per 2026 Senate race,source_id,Foreign key,Text,-,Foreign key to DimSource.
+DimRace,Dimension,One row per 2026 Senate race,incumbent_name_original,Attribute,Text,-,The value before correction. Retained so the original source record is never lost.
+DimRace,Dimension,One row per 2026 Senate race,incumbent_fec_cand_id_original,Attribute,Text,-,See the source register and table notes.
+DimRace,Dimension,One row per 2026 Senate race,incumbent_status_source_original,Attribute,Text,-,See the source register and table notes.
+DimRace,Dimension,One row per 2026 Senate race,first_elected_or_appointed_original,Attribute,Text,-,See the source register and table notes.
+DimRace,Dimension,One row per 2026 Senate race,corrections_applied,Attribute,Text,-,Correction IDs applied to this row. The pre-correction values are in the matching *_original columns.
+DimRace,Dimension,One row per 2026 Senate race,incumbent_source_vintage,Attribute,Text,-,See the source register and table notes.
+DimCandidate,Dimension,One row per FEC Senate filer,fec_cand_id,Primary key,Text,-,FEC candidate identifier (e.g. S6TX00479). The only key used to join money to people. Never join on name.
+DimCandidate,Dimension,One row per FEC Senate filer,race_id,Foreign key,Text,-,"Race key, format 2026-SEN-XX where XX is the state postal code. Primary key of DimRace."
+DimCandidate,Dimension,One row per FEC Senate filer,candidate_name_fec,Attribute,Text,-,See the source register and table notes.
+DimCandidate,Dimension,One row per FEC Senate filer,party_fec,Attribute,Text,-,Party on the FEC filing. Can differ from the ballot label and can be UNK.
+DimCandidate,Dimension,One row per FEC Senate filer,party_group,Attribute,Text,D/R/Other,"Normalized party for grouping and color. Use this, not party_as_published."
+DimCandidate,Dimension,One row per FEC Senate filer,ico_status_fec,Attribute,Text,-,See the source register and table notes.
+DimCandidate,Dimension,One row per FEC Senate filer,state_postal,Attribute,Text,-,Two-letter state code.
+DimCandidate,Dimension,One row per FEC Senate filer,office,Attribute,Text,-,See the source register and table notes.
+DimCandidate,Dimension,One row per FEC Senate filer,on_general_ballot,Attribute,Text,-,See the source register and table notes.
+DimCandidate,Dimension,One row per FEC Senate filer,is_leading_candidate,Attribute,Text,Y/N,Y where the source marks this candidate as ahead. Not a certified win.
+DimCandidate,Dimension,One row per FEC Senate filer,receipts_rank_in_race,Attribute,Text,-,See the source register and table notes.
+DimCandidate,Dimension,One row per FEC Senate filer,fec_candidate_url,Attribute,Text,-,See the source register and table notes.
+DimCandidate,Dimension,One row per FEC Senate filer,source_id,Foreign key,Text,-,Foreign key to DimSource.
+DimRater,Dimension,One row per rating publisher,rater,Primary key,Text,-,The forecasting publisher.
+DimRater,Dimension,One row per rating publisher,publisher_url,Attribute,Text,-,See the source register and table notes.
+DimRater,Dimension,One row per rating publisher,access_status,Attribute,Text,-,Whether the publisher's own ratings page could be read.
+DimRater,Dimension,One row per rating publisher,access_note,Attribute,Text,-,See the source register and table notes.
+DimRater,Dimension,One row per rating publisher,publisher_last_update_seen,Attribute,Text,-,See the source register and table notes.
+DimRater,Dimension,One row per rating publisher,checked_date,Attribute,Text,-,See the source register and table notes.
+DimResultStatus,Dimension,One row per status value,result_status,Primary key,Text,-,See the source register and table notes.
+DimResultStatus,Dimension,One row per status value,layer,Attribute,Text,-,See the source register and table notes.
+DimResultStatus,Dimension,One row per status value,definition,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,source_id,Primary key,Text,-,Foreign key to DimSource.
+DimSource,Dimension,One row per source,source_name,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,publisher,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,url,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,content,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,period_or_vintage,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,retrieved,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,source_type,Attribute,Text,-,See the source register and table notes.
+DimSource,Dimension,One row per source,usage_notes,Attribute,Text,-,See the source register and table notes.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,observation_id,Primary key,Text,-,Key of one observation of one candidate's votes from one source at one time. Primary key of FactResultObservation.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,race_id,Foreign key,Text,-,"Race key, format 2026-SEN-XX where XX is the state postal code. Primary key of DimRace."
+FactResultObservation,Fact,One observation of one candidate from one source at one time,state_postal,Attribute,Text,-,Two-letter state code.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,candidate_name_as_published,Attribute,Text,-,See the source register and table notes.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,party_as_published,Attribute,Text,-,"Party label exactly as printed, including fusion labels such as 'D / Working Families Party'."
+FactResultObservation,Fact,One observation of one candidate from one source at one time,candidate_votes,Attribute,Whole number,Votes,"Votes for this candidate. BLANK means the source publishes no count, never zero."
+FactResultObservation,Fact,One observation of one candidate from one source at one time,published_percent,Attribute,Decimal,Percent,The percentage the source itself printed. Kept so it can be checked against vote_share_pct.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,race_total_votes,Attribute,Whole number,Votes,Total votes in the race as published by the source.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,source_id,Foreign key,Text,-,Foreign key to DimSource.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,observed_at,Attribute,Text,-,"When the source reported the figures, as the source states it."
+FactResultObservation,Fact,One observation of one candidate from one source at one time,status_label_as_published,Attribute,Text,-,"The wording the source itself used, for example UNOFFICIAL RESULTS."
+FactResultObservation,Fact,One observation of one candidate from one source at one time,reporting_units_as_published,Attribute,Text,-,"Precincts, counties or localities reporting, as published."
+FactResultObservation,Fact,One observation of one candidate from one source at one time,source_tier,Attribute,Text,-,"Official state election authority, or Media aggregator. Decides which observation wins."
+FactResultObservation,Fact,One observation of one candidate from one source at one time,note,Attribute,Text,-,See the source register and table notes.
+FactResultObservation,Fact,One observation of one candidate from one source at one time,fec_cand_id,Foreign key,Text,-,FEC candidate identifier (e.g. S6TX00479). The only key used to join money to people. Never join on name.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",candidate_result_id,Primary key,Text,-,Surrogate key for a candidate's row within a race. Primary key of FactCandidateResult.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",race_id,Foreign key,Text,-,"Race key, format 2026-SEN-XX where XX is the state postal code. Primary key of DimRace."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",state_postal,Attribute,Text,-,Two-letter state code.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",state_fips,Foreign key,Text,-,"Two-digit state FIPS code, stored as text to preserve leading zeros."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",candidate_name,Attribute,Text,-,See the source register and table notes.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",party_as_published,Attribute,Text,-,"Party label exactly as printed, including fusion labels such as 'D / Working Families Party'."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",party_group,Attribute,Text,D/R/Other,"Normalized party for grouping and color. Use this, not party_as_published."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",row_type,Attribute,Text,-,"Candidate, Withdrawn candidate, or Aggregate write-in. Filter to Candidate for analysis."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",fec_cand_id,Foreign key,Text,-,FEC candidate identifier (e.g. S6TX00479). The only key used to join money to people. Never join on name.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",fec_id_match_method,Attribute,Text,-,"How the FEC ID was resolved: automatic, by incumbency flag, or a manual override with its reason. Blank where no filing was found."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",candidate_votes,Attribute,Whole number,Votes,"Votes for this candidate. BLANK means the source publishes no count, never zero."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",race_total_votes,Attribute,Whole number,Votes,Total votes in the race as published by the source.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",vote_share,Attribute,Decimal,Ratio 0-1,"candidate_votes / race_total_votes, computed here. Format as a percentage in Power BI."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",vote_share_pct,Attribute,Decimal,Percent,Same value as a percentage.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",published_percent,Attribute,Decimal,Percent,The percentage the source itself printed. Kept so it can be checked against vote_share_pct.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",is_leading_candidate,Attribute,Text,Y/N,Y where the source marks this candidate as ahead. Not a certified win.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",result_status,Foreign key,Text,-,See the source register and table notes.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",result_tier,Attribute,Text,-,"Evidence behind this row: official state authority, media aggregator, or no count."
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",count_completeness,Attribute,Text,-,Appears complete / Review - low for this state / Clearly partial / No counts published. ANALYST JUDGMENT: the source publishes no percent-reporting figure.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",reporting_units,Attribute,Text,-,See the source register and table notes.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",certified,Attribute,Text,Y/N,N on every row in this version.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",certified_date,Attribute,Date,-,Empty until a state certifies.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",source_id,Foreign key,Text,-,Foreign key to DimSource.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",source_url,Attribute,Text,-,See the source register and table notes.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",source_observed_at,Attribute,Text,-,See the source register and table notes.
+FactCandidateResult,Fact,"One row per candidate per race, current best evidence",source_note,Attribute,Text,-,What the source said about the figures on this row.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",race_id,Primary key,Text,-,"Race key, format 2026-SEN-XX where XX is the state postal code. Primary key of DimRace."
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",state_name,Attribute,Text,-,Full state name. Set Data category = State or Province in Power BI for mapping.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",state_postal,Attribute,Text,-,Two-letter state code.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",state_fips,Foreign key,Text,-,"Two-digit state FIPS code, stored as text to preserve leading zeros."
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",projection_status,Attribute,Text,-,"Projected where a news organization called the race, otherwise 'Not called'."
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",projected_winner_name,Attribute,Text,-,Winner as named by the calling organization.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",projected_winner_party,Attribute,Text,D/R,Party of the projected winner.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",projected_winner_fec_cand_id,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",projection_called_by,Attribute,Text,-,The organization that made the call.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",projection_clock_et,Attribute,Text,-,Clock time of the call as printed by the source (Eastern).
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",projection_source_id,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",aggregator_count_status,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",aggregator_source_id,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",official_count_status,Attribute,Text,-,Published or Not obtained.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",official_source_id,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",official_source_url,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",official_status_label,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",official_reporting_units,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",official_last_updated,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",official_not_obtained_reason,Attribute,Text,-,Why no official count exists for this race.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",certification_status,Attribute,Text,-,'Not certified' on every row in this version.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",certified_date,Attribute,Date,-,Empty until a state certifies.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",certification_source_id,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",best_evidence_tier,Attribute,Text,-,"Strongest evidence for the race: official count, aggregator count, projection only, or none."
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",leading_candidate_name,Attribute,Text,-,Candidate ahead in the published count. Separate from the projection.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",leading_candidate_party,Attribute,Text,D/R/Other,Party of the leading candidate.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",leading_candidate_fec_cand_id,Attribute,Text,-,See the source register and table notes.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",race_total_votes,Attribute,Whole number,Votes,Total votes in the race as published by the source.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",leading_votes,Attribute,Whole number,Votes,Votes for the leading candidate.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",margin_votes,Attribute,Whole number,Votes,"First minus second place, in votes. Blank where counts are missing."
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",margin_pct,Attribute,Decimal,Percent,Margin as a percentage of total votes. Unsafe where count_completeness is not 'Appears complete'.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",margin_safe_to_use,Attribute,Text,Y/N,Y only where the count comes from an official source with complete reporting units. Three races qualify.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",count_completeness,Attribute,Text,-,Appears complete / Review - low for this state / Clearly partial / No counts published. ANALYST JUDGMENT: the source publishes no percent-reporting figure.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",sources_agree,Attribute,Text,Y/N,Y where the projection and the published count point to the same party.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",seat_party_before,Attribute,Text,D/R,Party holding the seat before this election. Drives flip_flag.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",flip_flag,Attribute,Text,Y/N,Y where the leading or projected party differs from seat_party_before.
+FactRaceResult,Fact,"One row per race, with four evidence tiers side by side",is_special_election,Attribute,Text,Y/N,Y for the Florida and Ohio special elections.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",rating_id,Primary key,Text,-,Surrogate key for one rater's rating of one race.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",race_id,Foreign key,Text,-,"Race key, format 2026-SEN-XX where XX is the state postal code. Primary key of DimRace."
+FactRaceRating,Fact,"One row per race per rater, all quarantined",rater,Foreign key,Text,-,The forecasting publisher.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",rating,Attribute,Text,-,"Rating as published (Solid D, Lean R, Tossup and so on)."
+FactRaceRating,Fact,"One row per race per rater, all quarantined",rating_score_dem_positive,Attribute,Decimal,Index -3 to +3,"Rating as a number, positive = Democratic. Safe R / Solid R = -3, Tossup = 0."
+FactRaceRating,Fact,"One row per race per rater, all quarantined",rating_as_of_date,Attribute,Date,-,Date the source attributes to this rating.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",rating_stage,Attribute,Text,-,See the source register and table notes.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",source_id,Foreign key,Text,-,Foreign key to DimSource.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",verification_status,Attribute,Text,-,"Unverified - publisher not reachable, or Contradicted by a later source. No rating in this version is confirmed."
+FactRaceRating,Fact,"One row per race per rater, all quarantined",verification_method,Attribute,Text,-,See the source register and table notes.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",verification_note,Attribute,Text,-,What was attempted and what was found.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",verified_date,Attribute,Text,-,See the source register and table notes.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",publisher_updated_since,Attribute,Text,Y/Unknown,Y where the publisher's page was seen carrying a later update date than the stored rating.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",use_with_caution,Attribute,Text,-,See the source register and table notes.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",analysis_eligible,Attribute,Text,Y/N,N on every rating in this version. Ratings must not enter forecast measures.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",quarantine_reason,Attribute,Text,-,Why this rating is excluded.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",quarantine_date,Attribute,Text,-,See the source register and table notes.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",release_condition,Attribute,Text,-,What must happen before the rating may be used.
+FactRaceRating,Fact,"One row per race per rater, all quarantined",excluded_from_measures,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,fec_cand_id,Primary key,Text,-,FEC candidate identifier (e.g. S6TX00479). The only key used to join money to people. Never join on name.
+FactCandidateFinance,Fact,One row per FEC candidate ID,coverage_start_date,Attribute,Date,-,First day of the reporting period.
+FactCandidateFinance,Fact,One row per FEC candidate ID,coverage_end_date,Attribute,Date,-,Last day of the reporting period. Differs by candidate: filter before comparing.
+FactCandidateFinance,Fact,One row per FEC candidate ID,total_receipts,Attribute,Decimal,US dollars,All money received in the reporting period.
+FactCandidateFinance,Fact,One row per FEC candidate ID,total_disbursements,Attribute,Decimal,US dollars,All money spent in the reporting period.
+FactCandidateFinance,Fact,One row per FEC candidate ID,cash_on_hand_end,Attribute,Decimal,US dollars,Cash at the end of the period.
+FactCandidateFinance,Fact,One row per FEC candidate ID,cash_on_hand_begin,Attribute,Decimal,US dollars,Cash at the start of the period.
+FactCandidateFinance,Fact,One row per FEC candidate ID,debt_owed_by_committee,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,debt_owed_to_committee,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,individual_contributions,Attribute,Decimal,US dollars,Total from individuals (itemized plus unitemized).
+FactCandidateFinance,Fact,One row per FEC candidate ID,individual_itemized,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,individual_unitemized,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,other_committee_contributions,Attribute,Decimal,US dollars,From PACs and other committees.
+FactCandidateFinance,Fact,One row per FEC candidate ID,party_committee_contributions,Attribute,Decimal,US dollars,From party committees.
+FactCandidateFinance,Fact,One row per FEC candidate ID,candidate_self_contributions,Attribute,Decimal,US dollars,The candidate's own money.
+FactCandidateFinance,Fact,One row per FEC candidate ID,candidate_loans,Attribute,Decimal,US dollars,Loans to the campaign.
+FactCandidateFinance,Fact,One row per FEC candidate ID,transfers_from_auth_committees,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,operating_expenditures,Attribute,Decimal,US dollars,Operating spending.
+FactCandidateFinance,Fact,One row per FEC candidate ID,total_contribution_refunds,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,committee_id_fec,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,filing_date,Attribute,Date,-,EMPTY in this version: not present in the source file.
+FactCandidateFinance,Fact,One row per FEC candidate ID,extraction_date,Attribute,Date,-,The day this row was extracted.
+FactCandidateFinance,Fact,One row per FEC candidate ID,source_id,Foreign key,Text,-,Foreign key to DimSource.
+FactCandidateFinance,Fact,One row per FEC candidate ID,source_file,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,fec_committee_id,Attribute,Text,-,"Principal campaign committee ID, format C followed by 8 digits, read from the candidate's FEC page."
+FactCandidateFinance,Fact,One row per FEC candidate ID,committee_id_status,Attribute,Text,-,Why the committee ID is absent.
+FactCandidateFinance,Fact,One row per FEC candidate ID,filing_date_status,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,aggregation_level,Attribute,Text,-,States that FEC totals are already aggregated across the candidate's authorized committees.
+FactCandidateFinance,Fact,One row per FEC candidate ID,transfers_from_own_auth_committees,Attribute,Decimal,US dollars,Money moved in from the candidate's other authorized committees. Rebuilding totals from committee-level files without removing these would double-count.
+FactCandidateFinance,Fact,One row per FEC candidate ID,transfers_to_own_auth_committees,Attribute,Decimal,US dollars,Money moved out to the candidate's other authorized committees.
+FactCandidateFinance,Fact,One row per FEC candidate ID,net_contribution,Attribute,Decimal,US dollars,"Contributions net of refunds, as the FEC computes it."
+FactCandidateFinance,Fact,One row per FEC candidate ID,net_operating_expenditure,Attribute,Decimal,US dollars,Operating spending net of offsets.
+FactCandidateFinance,Fact,One row per FEC candidate ID,same_person_other_fec_ids,Attribute,Text,-,"Other FEC IDs sharing this candidate's name, with the office prefix. IDs are office-specific."
+FactCandidateFinance,Fact,One row per FEC candidate ID,same_person_other_id_count,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,reporting_period_label,Attribute,Text,-,"Human-readable period, or a note that none is stated."
+FactCandidateFinance,Fact,One row per FEC candidate ID,period_comparable_flag,Attribute,Text,Y/N,"Y only where coverage_end_date is 2026-10-14, the most common period. Compare money within one flag value."
+FactCandidateFinance,Fact,One row per FEC candidate ID,fec_committee_name,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,other_authorized_committee_ids,Attribute,Text,-,"Further authorized committees, semicolon separated. Leadership PACs are excluded by design."
+FactCandidateFinance,Fact,One row per FEC candidate ID,other_authorized_committee_count,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,committee_note,Attribute,Text,-,See the source register and table notes.
+FactCandidateFinance,Fact,One row per FEC candidate ID,receipts_excl_internal_transfers,Attribute,Decimal,US dollars,total_receipts minus transfers in from the candidate's own authorized committees. Derived here for cross-candidate comparison.
+FactCandidateFinance,Fact,One row per FEC candidate ID,internal_transfer_share,Attribute,Decimal,Ratio 0-1,Share of receipts that came from the candidate's own committees.
+FactCandidateFinance,Fact,One row per FEC candidate ID,double_count_risk,Attribute,Text,-,Names the hazard where internal transfers are present.
+FactCandidateFinance,Fact,One row per FEC candidate ID,comparability_cohort,Attribute,Text,-,Reporting period label. Compare money only within one cohort.
+FactCandidateFinance,Fact,One row per FEC candidate ID,source_id_committee,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,validation_id,Primary key,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,race_id,Foreign key,Text,-,"Race key, format 2026-SEN-XX where XX is the state postal code. Primary key of DimRace."
+WinnerValidation,Metadata,One row per projected winner,state_postal,Attribute,Text,-,Two-letter state code.
+WinnerValidation,Metadata,One row per projected winner,projected_winner_name,Attribute,Text,-,Winner as named by the calling organization.
+WinnerValidation,Metadata,One row per projected winner,projected_winner_party,Attribute,Text,D/R,Party of the projected winner.
+WinnerValidation,Metadata,One row per projected winner,fec_cand_id,Foreign key,Text,-,FEC candidate identifier (e.g. S6TX00479). The only key used to join money to people. Never join on name.
+WinnerValidation,Metadata,One row per projected winner,fec_name,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,fec_party,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,fec_state,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,fec_office,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,projection_source,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,unofficial_aggregator_agrees,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,official_source_agrees,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,certified_confirmation,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,highest_evidence_tier,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,checks_passed,Attribute,Text,-,Which validation checks this projected winner passed.
+WinnerValidation,Metadata,One row per projected winner,checks_passed_count,Attribute,Text,-,See the source register and table notes.
+WinnerValidation,Metadata,One row per projected winner,validation_outcome,Attribute,Text,-,"Whether the winner was validated against an official source, an unofficial count, or nothing."
+WinnerValidation,Metadata,One row per projected winner,validated_date,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,correction_id,Primary key,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,table,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,key,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,field,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,original_value,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,original_source_id,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,corrected_value,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,corrected_source_id,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,reason,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,evidence,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,confidence,Attribute,Text,-,See the source register and table notes.
+CorrectionRegister,Metadata,One row per correction,corrected_date,Attribute,Text,-,See the source register and table notes.
+VerifiedNoChange,Metadata,One row per check that found no change needed,check_id,Primary key,Text,-,Check identifier.
+VerifiedNoChange,Metadata,One row per check that found no change needed,scope,Attribute,Text,-,See the source register and table notes.
+VerifiedNoChange,Metadata,One row per check that found no change needed,finding,Attribute,Text,-,See the source register and table notes.
+VerifiedNoChange,Metadata,One row per check that found no change needed,outcome,Attribute,Text,-,See the source register and table notes.
+VerifiedNoChange,Metadata,One row per check that found no change needed,date,Attribute,Text,-,See the source register and table notes.
+HighSeverityResolution,Metadata,One row per v2 high-severity item,item_id,Primary key,Text,-,See the source register and table notes.
+HighSeverityResolution,Metadata,One row per v2 high-severity item,v2_check_id,Attribute,Text,-,See the source register and table notes.
+HighSeverityResolution,Metadata,One row per v2 high-severity item,check,Attribute,Text,-,See the source register and table notes.
+HighSeverityResolution,Metadata,One row per v2 high-severity item,v2_finding,Attribute,Text,-,See the source register and table notes.
+HighSeverityResolution,Metadata,One row per v2 high-severity item,status,Attribute,Text,-,See the source register and table notes.
+HighSeverityResolution,Metadata,One row per v2 high-severity item,action_taken,Attribute,Text,-,See the source register and table notes.
+HighSeverityResolution,Metadata,One row per v2 high-severity item,why_unresolved,Attribute,Text,-,Why an issue could not be closed.
+UnresolvedIssues,Metadata,One row per open issue,issue_id,Primary key,Text,-,See the source register and table notes.
+UnresolvedIssues,Metadata,One row per open issue,area,Attribute,Text,-,See the source register and table notes.
+UnresolvedIssues,Metadata,One row per open issue,issue,Attribute,Text,-,See the source register and table notes.
+UnresolvedIssues,Metadata,One row per open issue,severity,Attribute,Text,-,"Info, Low, Medium or High."
+UnresolvedIssues,Metadata,One row per open issue,detail,Attribute,Text,-,See the source register and table notes.
+UnresolvedIssues,Metadata,One row per open issue,why_unresolved,Attribute,Text,-,Why an issue could not be closed.
+UnresolvedIssues,Metadata,One row per open issue,recommended_action,Attribute,Text,-,What to do about it.
+UnresolvedIssues,Metadata,One row per open issue,recorded_date,Attribute,Text,-,See the source register and table notes.
+DataQualityChecks,Metadata,One row per check,check_id,Primary key,Text,-,Check identifier.
+DataQualityChecks,Metadata,One row per check,category,Attribute,Text,-,What the check covers.
+DataQualityChecks,Metadata,One row per check,check,Attribute,Text,-,See the source register and table notes.
+DataQualityChecks,Metadata,One row per check,result,Attribute,Text,-,"PASS, WARN or FAIL."
+DataQualityChecks,Metadata,One row per check,severity,Attribute,Text,-,"Info, Low, Medium or High."
+DataQualityChecks,Metadata,One row per check,detail,Attribute,Text,-,See the source register and table notes.
+DataQualityChecks,Metadata,One row per check,recommended_resolution,Attribute,Text,-,What to do about a failed check.
+DataQualityChecks,Metadata,One row per check,run_date,Attribute,Text,-,See the source register and table notes.
+ChangeLog,Metadata,One row per change,change_id,Primary key,Text,-,See the source register and table notes.
+ChangeLog,Metadata,One row per change,version,Attribute,Text,-,See the source register and table notes.
+ChangeLog,Metadata,One row per change,date,Attribute,Text,-,See the source register and table notes.
+ChangeLog,Metadata,One row per change,change,Attribute,Text,-,See the source register and table notes.
+ChangeLog,Metadata,One row per change,detail,Attribute,Text,-,See the source register and table notes.

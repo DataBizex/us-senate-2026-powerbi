@@ -1,0 +1,52 @@
+state_fips,state_postal,state_name,has_2026_senate_race
+01,AL,Alabama,Y
+02,AK,Alaska,Y
+04,AZ,Arizona,N
+05,AR,Arkansas,Y
+06,CA,California,N
+08,CO,Colorado,Y
+09,CT,Connecticut,N
+10,DE,Delaware,Y
+11,DC,District of Columbia,N
+12,FL,Florida,Y
+13,GA,Georgia,Y
+15,HI,Hawaii,N
+16,ID,Idaho,Y
+17,IL,Illinois,Y
+18,IN,Indiana,N
+19,IA,Iowa,Y
+20,KS,Kansas,Y
+21,KY,Kentucky,Y
+22,LA,Louisiana,Y
+23,ME,Maine,Y
+24,MD,Maryland,N
+25,MA,Massachusetts,Y
+26,MI,Michigan,Y
+27,MN,Minnesota,Y
+28,MS,Mississippi,Y
+29,MO,Missouri,N
+30,MT,Montana,Y
+31,NE,Nebraska,Y
+32,NV,Nevada,N
+33,NH,New Hampshire,Y
+34,NJ,New Jersey,Y
+35,NM,New Mexico,Y
+36,NY,New York,N
+37,NC,North Carolina,Y
+38,ND,North Dakota,N
+39,OH,Ohio,Y
+40,OK,Oklahoma,Y
+41,OR,Oregon,Y
+42,PA,Pennsylvania,N
+44,RI,Rhode Island,Y
+45,SC,South Carolina,Y
+46,SD,South Dakota,Y
+47,TN,Tennessee,Y
+48,TX,Texas,Y
+49,UT,Utah,N
+50,VT,Vermont,N
+51,VA,Virginia,Y
+53,WA,Washington,N
+54,WV,West Virginia,Y
+55,WI,Wisconsin,N
+56,WY,Wyoming,Y

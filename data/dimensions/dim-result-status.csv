@@ -1,0 +1,5 @@
+result_status,layer,definition
+Projected,Projection,A news organization has called the race. Not a count and not official.
+Unofficial,Count,Vote counts published before the state canvass is complete. Subject to change.
+Official/Certified,Certification,Certified by the state election authority. No race in this version has this status.
+Pending,All,No call and no published count.

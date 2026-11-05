@@ -1,0 +1,14 @@
+change_id,version,date,change,detail
+CL01,3.0,2026-11-05,Official state results retrieved,"Official counts obtained from six state election authorities: Virginia, Montana, Nebraska, Texas, West Virginia and Wyoming. All six reconcile exactly to their published totals."
+CL02,3.0,2026-11-05,Virginia's partial count replaced,"Virginia now carries 3,568,674 votes across 133 of 133 localities, against the 23,140 captured earlier. The earlier observation is retained, not overwritten."
+CL03,3.0,2026-11-05,Append-only observation table added,FactResultObservation holds 159 observations across two collection rounds. The current-best result tables are derived from it; no earlier observation was edited.
+CL04,3.0,2026-11-05,South Carolina identity corrected,"Senator Lindsey Graham died on 11 July 2026; his sister Darline Graham was appointed and won the nomination. The race table is corrected, the original values retained in *_original columns."
+CL05,3.0,2026-11-05,Winner validation table added,All 33 projected winners validated individually across four evidence tiers. 6 are confirmed against an official state source; none now rests on a projection alone.
+CL06,3.0,2026-11-05,Ratings quarantined,"All 210 ratings carry analysis_eligible = N and are excluded from forecast measures. Rows, sources and the release condition are retained."
+CL07,3.0,2026-11-05,Committee IDs added,Principal committee IDs read from the FEC for all 72 ballot candidates; 70 resolved. Additional authorized committees listed for 15. Leadership PACs excluded.
+CL08,3.0,2026-11-05,Finance comparability improved,"Added comparability_cohort, receipts_excl_internal_transfers, internal_transfer_share and double_count_risk."
+CL09,3.0,2026-11-05,FEC ID resolution completed,"One further ID resolved with corroboration (Nebraska, Chuck Conboy). The remaining 29 unmatched are write-in and minor candidates with no filing found; recorded rather than guessed."
+CL10,3.0,2026-11-05,High-severity items resolved or retained,"Of the seven v2 High items: two resolved, one resolved for the analytical set, one partially resolved, three retained as unresolved with reasons."
+CL11,3.0,2026-11-05,Unresolved issues register added,"12 open issues with severity, cause and recommended action."
+CL12,3.0,2026-11-05,Historical-data trap identified and avoided,Texas's older official results system opens on the 2024 general election by default. Its 2024 figures were rejected and the current system used instead.
+CL13,3.0,2026-11-05,v1 and v2 retained,Both earlier versions are unchanged in their own folders. v3 files carry a v3 suffix.

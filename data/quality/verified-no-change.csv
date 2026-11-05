@@ -1,0 +1,3 @@
+check_id,scope,finding,outcome,date
+V01,All 35 races,Ballot-marked incumbent compared against the June snapshot incumbent on full name,South Carolina was the only mismatch. The other 19 races with a ballot incumbent marker agree on first and last name.,2026-11-05
+V02,"Idaho, New Mexico","June snapshot says the incumbent was renominated, but no ballot row carries an incumbent marker",Attributed to inconsistent bold/underline rendering in the results source rather than a factual conflict. Both incumbents appear on the ballot under the expected name and party. Not treated as a correction.,2026-11-05

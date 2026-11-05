@@ -1,0 +1,28 @@
+# Power BI
+*.pbix
+*.pbit
+.pbi/
+*.Report/.pbi/
+*.SemanticModel/.pbi/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Census / API keys
+*.key
+secrets.*
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Working files
+~$*
+*.tmp
+/scratch/

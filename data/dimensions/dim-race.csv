@@ -1,0 +1,36 @@
+race_id,state_fips,state_postal,state_name,senate_class,is_special_election,election_date,incumbent_name,incumbent_party,incumbent_fec_cand_id,incumbent_running,incumbent_status_source,first_elected_or_appointed,pvi_text,pvi_numeric_dem_positive,seat_party_before,source_id,incumbent_name_original,incumbent_fec_cand_id_original,incumbent_status_source_original,first_elected_or_appointed_original,corrections_applied,incumbent_source_vintage
+2026-SEN-FL,12,FL,Florida,3,Y,2026-11-03,Ashley Moody,R,S6FL00640,Y,Interim appointee running,2025,R+5,-5.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-OH,39,OH,Ohio,3,Y,2026-11-03,Jon Husted,R,S6OH00304,Y,Interim appointee nominated,2025,R+5,-5.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-AL,01,AL,Alabama,2,N,2026-11-03,Tommy Tuberville,R,,N,Retiring (running for governor),2020,R+15,-15.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-AK,02,AK,Alaska,2,N,2026-11-03,Dan Sullivan,R,S4AK00214,Y,Running,2014,R+6,-6.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-AR,05,AR,Arkansas,2,N,2026-11-03,Tom Cotton,R,S4AR00103,Y,Renominated,2014,R+15,-15.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-CO,08,CO,Colorado,2,N,2026-11-03,John Hickenlooper,D,S0CO00575,Y,Running,2020,D+6,6.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-DE,10,DE,Delaware,2,N,2026-11-03,Chris Coons,D,S0DE00092,Y,Running,2010,D+8,8.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-GA,13,GA,Georgia,2,N,2026-11-03,Jon Ossoff,D,S8GA00180,Y,Renominated,2021,R+1,-1.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-ID,16,ID,Idaho,2,N,2026-11-03,Jim Risch,R,S8ID00092,Y,Renominated,2008,R+18,-18.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-IL,17,IL,Illinois,2,N,2026-11-03,Dick Durbin,D,,N,Retiring,1996,D+6,6.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-IA,19,IA,Iowa,2,N,2026-11-03,Joni Ernst,R,,N,Retiring,2014,R+6,-6.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-KS,20,KS,Kansas,2,N,2026-11-03,Roger Marshall,R,S0KS00315,Y,Running,2020,R+8,-8.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-KY,21,KY,Kentucky,2,N,2026-11-03,Mitch McConnell,R,,N,Retiring,1984,R+15,-15.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-LA,22,LA,Louisiana,2,N,2026-11-03,Bill Cassidy,R,S4LA00107,N,Lost renomination,2014,R+11,-11.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-ME,23,ME,Maine,2,N,2026-11-03,Susan Collins,R,S6ME00159,Y,Renominated,1996,D+4,4.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-MA,25,MA,Massachusetts,2,N,2026-11-03,Ed Markey,D,S4MA00028,Y,Running,2013,D+14,14.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-MI,26,MI,Michigan,2,N,2026-11-03,Gary Peters,D,,N,Retiring,2014,EVEN,0.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-MN,27,MN,Minnesota,2,N,2026-11-03,Tina Smith,D,,N,Retiring,2018,D+3,3.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-MS,28,MS,Mississippi,2,N,2026-11-03,Cindy Hyde-Smith,R,S8MS00261,Y,Renominated,2018,R+11,-11.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-MT,30,MT,Montana,2,N,2026-11-03,Steve Daines,R,,N,Retiring,2014,R+10,-10.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-NE,31,NE,Nebraska,2,N,2026-11-03,Pete Ricketts,R,S6NE00129,Y,Renominated,2023,R+10,-10.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-NH,33,NH,New Hampshire,2,N,2026-11-03,Jeanne Shaheen,D,,N,Retiring,2008,D+2,2.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-NJ,34,NJ,New Jersey,2,N,2026-11-03,Cory Booker,D,S4NJ00185,Y,Renominated,2013,D+4,4.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-NM,35,NM,New Mexico,2,N,2026-11-03,Ben Ray Lujan,D,S0NM00058,Y,Renominated,2020,D+4,4.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-NC,37,NC,North Carolina,2,N,2026-11-03,Thom Tillis,R,,N,Retiring,2014,R+1,-1.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-OK,40,OK,Oklahoma,2,N,2026-11-03,Alan Armstrong,R,,N,Interim appointee ineligible to run,2026,R+17,-17.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-OR,41,OR,Oregon,2,N,2026-11-03,Jeff Merkley,D,S8OR00207,Y,Renominated,2008,D+8,8.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-RI,44,RI,Rhode Island,2,N,2026-11-03,Jack Reed,D,S6RI00163,Y,Running,1996,D+8,8.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-SC,45,SC,South Carolina,2,N,2026-11-03,Darline Graham,R,S6SC04437,Y,"Interim appointee, nominated at the 25 August 2026 runoff, lost the general election",2026 (appointed),R+8,-8.0,R,S02,Lindsey Graham,S0SC00149,Renominated,2002,C01; C02; C03; C04,June 2026 snapshot unless a correction is listed
+2026-SEN-SD,46,SD,South Dakota,2,N,2026-11-03,Mike Rounds,R,S4SD00049,Y,Renominated,2014,R+15,-15.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-TN,47,TN,Tennessee,2,N,2026-11-03,Bill Hagerty,R,S0TN00169,Y,Running,2020,R+14,-14.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-TX,48,TX,Texas,2,N,2026-11-03,John Cornyn,R,S2TX00106,N,Lost renomination in runoff,2002,R+6,-6.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-VA,51,VA,Virginia,2,N,2026-11-03,Mark Warner,D,S6VA00093,Y,Running,2008,D+3,3.0,D,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-WV,54,WV,West Virginia,2,N,2026-11-03,Shelley Moore Capito,R,S4WV00159,Y,Renominated,2014,R+21,-21.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed
+2026-SEN-WY,56,WY,Wyoming,2,N,2026-11-03,Cynthia Lummis,R,S0WY00137,N,Retiring,2020,R+23,-23.0,R,S02,,,,,,June 2026 snapshot unless a correction is listed

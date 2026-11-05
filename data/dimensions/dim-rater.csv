@@ -1,0 +1,7 @@
+rater,publisher_url,access_status,access_note,publisher_last_update_seen,checked_date
+Cook Political Report,https://www.cookpolitical.com/ratings/senate-race-ratings,Not reachable,Fetch returned a client error; ratings not retrievable from this environment,,2026-11-05
+Inside Elections,https://insideelections.com/ratings/senate,"Reachable, ratings not rendered",Ratings block renders via JavaScript and returned only 'Loading',"Page header read: 'Updated: August 6, 2026 6:20pm'",2026-11-05
+Sabato's Crystal Ball,https://www.sabatocrystalball.com/2026-senate/,Not reachable,Publisher disallows automated retrieval (robots),,2026-11-05
+Race to the WH,https://www.racetothewh.com/senate,"Reachable, wrong cycle",URL served 2022 cycle content; no 2026 ratings displayed,,2026-11-05
+The Economist,https://www.economist.com,Not attempted,Subscription publication; ratings not retrievable from this environment,,2026-11-05
+RealClearPolitics,https://www.realclearpolitics.com/epolls/2026/senate/2026_elections_senate_map.html,Not reachable,Fetch returned a client error,,2026-11-05
