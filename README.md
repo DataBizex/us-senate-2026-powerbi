@@ -1,5 +1,7 @@
 # US Senate 2026 — election data model and Power BI report
 
+[![tests](https://github.com/DataBizex/us-senate-2026-powerbi/actions/workflows/tests.yml/badge.svg)](https://github.com/DataBizex/us-senate-2026-powerbi/actions/workflows/tests.yml)
+
 A validated data model of the **3 November 2026 United States Senate elections**, built so that incomplete, conflicting or unverified evidence cannot be mistaken for a final result.
 
 The interesting part of this project is not the election. It is the handling of evidence that arrives in pieces, from sources of unequal authority, at different times, some of it wrong.
