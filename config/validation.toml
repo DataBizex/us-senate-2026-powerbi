@@ -1,0 +1,348 @@
+# Configuration for the data-model validation suite.
+#
+# Every path, key relationship and expected value the tests rely on lives here,
+# so a change to the model is a change to this file rather than to test code.
+# Rules are taken from docs/METHODOLOGY.md, data/quality/model-rules.csv and
+# data/quality/data-quality-checks.csv; check IDs from that register are
+# quoted where a section re-runs one of them.
+
+[paths]
+# Relative to the directory holding this file.
+root = ".."
+# Relative to root.
+data_dir = "data"
+
+# Logical table name -> CSV path relative to data_dir.
+# Every CSV under data_dir must be listed (enforced by a test), so the
+# election-year scan cannot silently miss a file.
+[tables]
+dim_candidate            = "dimensions/dim-candidate.csv"
+dim_race                 = "dimensions/dim-race.csv"
+dim_rater                = "dimensions/dim-rater.csv"
+dim_result_status        = "dimensions/dim-result-status.csv"
+dim_source               = "dimensions/dim-source.csv"
+dim_state                = "dimensions/dim-state.csv"
+race_quality_flags       = "dimensions/race-quality-flags.csv"
+fact_candidate_finance   = "facts/fact-candidate-finance.csv"
+fact_candidate_result    = "facts/fact-candidate-result.csv"
+fact_race_rating         = "facts/fact-race-rating.csv"
+fact_race_result         = "facts/fact-race-result.csv"
+fact_result_observation  = "facts/fact-result-observation.csv"
+blockers                 = "quality/blockers.csv"
+correction_register      = "quality/correction-register.csv"
+data_quality_checks      = "quality/data-quality-checks.csv"
+high_severity_resolution = "quality/high-severity-resolution.csv"
+model_rules              = "quality/model-rules.csv"
+unresolved_issues        = "quality/unresolved-issues.csv"
+verified_no_change       = "quality/verified-no-change.csv"
+winner_validation        = "quality/winner-validation.csv"
+
+# ---------------------------------------------------------------------------
+# Keys (Q01, Q02, Q03, Q06)
+# ---------------------------------------------------------------------------
+
+[primary_keys]
+dim_candidate           = ["fec_cand_id"]
+dim_race                = ["race_id"]
+dim_rater               = ["rater"]
+dim_source              = ["source_id"]
+dim_state               = ["state_fips"]
+race_quality_flags      = ["race_id"]
+fact_candidate_finance  = ["fec_cand_id"]
+fact_candidate_result   = ["candidate_result_id"]
+fact_race_rating        = ["rating_id"]
+fact_race_result        = ["race_id"]
+fact_result_observation = ["observation_id"]
+correction_register     = ["correction_id"]
+data_quality_checks     = ["check_id"]
+winner_validation       = ["validation_id"]
+
+# Row counts from the grain table in docs/METHODOLOGY.md.
+[expected_rows]
+dim_race                = 35
+dim_candidate           = 619
+race_quality_flags      = 35
+fact_race_result        = 35
+fact_candidate_result   = 169
+fact_result_observation = 159
+fact_candidate_finance  = 619
+fact_race_rating        = 210
+
+# ---------------------------------------------------------------------------
+# Referential integrity (Q04)
+#
+# One section per key family. Each child is "table.column".
+#   nullable      blank is allowed (blank means the source published no value)
+#   separator     the cell can hold several keys separated by this string
+#   covers_parent every parent key must also appear in this child
+# ---------------------------------------------------------------------------
+
+[foreign_keys.race_id]
+parent = "dim_race.race_id"
+children = [
+  { column = "dim_candidate.race_id" },
+  { column = "race_quality_flags.race_id", covers_parent = true },
+  { column = "fact_race_result.race_id", covers_parent = true },
+  { column = "fact_candidate_result.race_id" },
+  { column = "fact_result_observation.race_id" },
+  { column = "fact_race_rating.race_id", covers_parent = true },
+  { column = "winner_validation.race_id" },
+]
+
+[foreign_keys.fec_cand_id]
+parent = "dim_candidate.fec_cand_id"
+children = [
+  { column = "fact_candidate_finance.fec_cand_id", covers_parent = true },
+  { column = "fact_candidate_result.fec_cand_id", nullable = true },
+  { column = "fact_result_observation.fec_cand_id", nullable = true },
+  { column = "dim_race.incumbent_fec_cand_id", nullable = true },
+  { column = "dim_race.incumbent_fec_cand_id_original", nullable = true },
+  { column = "fact_race_result.projected_winner_fec_cand_id", nullable = true },
+  { column = "fact_race_result.leading_candidate_fec_cand_id", nullable = true },
+  { column = "winner_validation.fec_cand_id" },
+]
+
+[foreign_keys.state_fips]
+parent = "dim_state.state_fips"
+children = [
+  { column = "dim_race.state_fips" },
+  { column = "fact_candidate_result.state_fips" },
+  { column = "fact_race_result.state_fips" },
+]
+
+[foreign_keys.source_id]
+parent = "dim_source.source_id"
+children = [
+  { column = "dim_candidate.source_id" },
+  { column = "dim_race.source_id" },
+  { column = "fact_candidate_finance.source_id" },
+  { column = "fact_candidate_finance.source_id_committee", nullable = true },
+  { column = "fact_candidate_result.source_id" },
+  { column = "fact_race_rating.source_id" },
+  { column = "fact_race_result.projection_source_id" },
+  { column = "fact_race_result.aggregator_source_id" },
+  { column = "fact_race_result.official_source_id", nullable = true },
+  { column = "fact_race_result.certification_source_id" },
+  { column = "fact_result_observation.source_id" },
+  { column = "correction_register.original_source_id" },
+  { column = "correction_register.corrected_source_id", separator = ";" },
+]
+
+[foreign_keys.rater]
+parent = "dim_rater.rater"
+children = [
+  { column = "fact_race_rating.rater", covers_parent = true },
+]
+
+# ---------------------------------------------------------------------------
+# Vote reconciliation (Q18, Q23)
+# ---------------------------------------------------------------------------
+
+[votes]
+candidate_table   = "fact_candidate_result"
+race_table        = "fact_race_result"
+observation_table = "fact_result_observation"
+# Columns identifying one published snapshot of one race in the observation log.
+observation_snapshot = ["race_id", "source_id", "observed_at"]
+# Inside a counted race, only these row types may have a blank vote count.
+blank_votes_allowed_row_types = ["Withdrawn candidate"]
+# Races with a published count (35 races less Alaska and Mississippi).
+expected_counted_races = 33
+# Ballot-handling counts that must never appear as vote rows.
+ballot_handling_terms = ["overvote", "over vote", "undervote", "under vote"]
+
+# ---------------------------------------------------------------------------
+# Headline eligibility (R02, R03, Q51)
+# ---------------------------------------------------------------------------
+
+[headline]
+flags_table            = "race_quality_flags"
+eligible_column        = "headline_eligible"
+integrity_column       = "source_integrity_flag"
+source_tier_column     = "count_source_tier"
+official_tier          = "Official state election authority"
+completeness_column    = "count_completeness"
+complete_label         = "Complete reporting units"
+official_status_column = "official_count_status"
+official_status        = "Published"
+reporting_units_column = "official_reporting_units"
+# R02: "Three races qualify: Texas, Virginia, Wyoming."
+expected_eligible = ["2026-SEN-TX", "2026-SEN-VA", "2026-SEN-WY"]
+
+# ---------------------------------------------------------------------------
+# Rating quarantine (Q33)
+# ---------------------------------------------------------------------------
+
+[ratings]
+table    = "fact_race_rating"
+column   = "analysis_eligible"
+required = "N"
+
+# ---------------------------------------------------------------------------
+# Election year (Q49)
+#
+# Every cell of every table is scanned for years: four-digit years and
+# m/d/yy dates. An even year other than election_year is a value from another
+# federal election year and fails. Odd years are not election years; 2025 is
+# the first half of the 2026 FEC cycle and is allowed.
+#
+# Purely numeric measure columns (votes, dollars, shares) are not scanned,
+# because 2046 votes is not a year. A numeric column whose every value is an
+# integer between 1900 and 2100 is treated as a year column and IS scanned.
+# ---------------------------------------------------------------------------
+
+[election_year]
+year          = 2026
+election_date = "2026-11-03"
+date_column   = "dim_race.election_date"
+
+# Columns whose non-2026 years are not values from another election.
+# Each needs a reason; keep this list short and specific.
+[[election_year.exempt_columns]]
+columns = ["dim_race.first_elected_or_appointed", "dim_race.first_elected_or_appointed_original"]
+reason  = "Historical attribute of the incumbent (year first elected or appointed), not a result value."
+
+[[election_year.exempt_columns]]
+columns = ["correction_register.original_value", "correction_register.reason"]
+reason  = "Corrections retain the original value by design (C03 is a first-elected year)."
+
+[[election_year.exempt_columns]]
+columns = ["dim_source.source_name", "dim_source.url", "dim_source.period_or_vintage"]
+reason  = "Vintages of reference data (ACS 2020-2024, Census 2020 county codes), labelled as such per Q48."
+
+[[election_year.exempt_columns]]
+columns = ["fact_candidate_finance.fec_committee_name"]
+reason  = "Committee name as registered with the FEC."
+
+[[election_year.exempt_columns]]
+columns = [
+  "dim_rater.access_note",
+  "fact_race_rating.verification_note",
+  "fact_candidate_result.source_note",
+  "fact_result_observation.note",
+  "fact_race_result.official_not_obtained_reason",
+]
+reason = "Free-text notes recording that older-election content was seen and rejected (Texas 2024 system, Illinois list, a publisher serving 2022 ratings)."
+
+[[election_year.exempt_columns]]
+columns = [
+  "data_quality_checks.check",
+  "data_quality_checks.detail",
+  "high_severity_resolution.check",
+  "unresolved_issues.issue",
+  "unresolved_issues.detail",
+]
+reason = "Quality-register narrative describing the checks themselves, including the ACS 2020-2024 vintage and the rejected Texas 2024 figures."
+
+# Individual cells allowed despite the rule, keyed by the table's primary key.
+# An exception that no longer matches anything fails the suite, so this list
+# cannot go stale. Delete entries to make the rule strict.
+#
+# These five FEC filers have a 2026-cycle reporting period that opens in late
+# 2024: the FEC starts a committee's first report of a cycle on the day after
+# its previous report closed. The totals are the FEC's 2026-cycle figures
+# (source S01), but the period does include October-December 2024.
+[[election_year.known_exceptions]]
+table   = "fact_candidate_finance"
+keys    = ["S4TN00534", "S6FL00756", "S6ME00381", "S4ME00113", "S6IA00249"]
+columns = ["coverage_start_date", "reporting_period_label"]
+reason  = "FEC 2026-cycle reporting period opening in late 2024."
+
+# ---------------------------------------------------------------------------
+# Text and leading zeros (Q05)
+#
+# Checked against the raw CSV text with the standard-library csv module, so
+# the result does not depend on how pandas would infer types.
+# Every column whose name contains an "id", "ids" or "fips" token must be
+# listed here or in non_id_columns (enforced by a test).
+# ---------------------------------------------------------------------------
+
+[text_ids]
+non_id_columns = ["committee_id_status", "fec_id_match_method", "same_person_other_id_count"]
+
+[text_ids.formats]
+state_fips                     = { pattern = '^[0-9]{2}$', allow_blank = false }
+race_id                        = { pattern = '^2026-SEN-[A-Z]{2}$', allow_blank = false }
+candidate_result_id            = { pattern = '^2026-SEN-[A-Z]{2}-[0-9]{3}$', allow_blank = false }
+fec_cand_id                    = { pattern = '^S[0-9][A-Z]{2}[0-9]{5}$' }
+incumbent_fec_cand_id          = { pattern = '^S[0-9][A-Z]{2}[0-9]{5}$' }
+incumbent_fec_cand_id_original = { pattern = '^S[0-9][A-Z]{2}[0-9]{5}$' }
+projected_winner_fec_cand_id   = { pattern = '^S[0-9][A-Z]{2}[0-9]{5}$' }
+leading_candidate_fec_cand_id  = { pattern = '^S[0-9][A-Z]{2}[0-9]{5}$' }
+same_person_other_fec_ids      = { pattern = '^(?:[HS]:[HS][0-9][A-Z]{2}[0-9]{5}|P:P[0-9]{8})$', separator = ";" }
+committee_id_fec               = { pattern = '^C[0-9]{8}$' }
+fec_committee_id               = { pattern = '^C[0-9]{8}$' }
+other_authorized_committee_ids = { pattern = '^C[0-9]{8}$', separator = ";" }
+source_id                      = { pattern = '^S[0-9]{2}$', allow_blank = false }
+source_id_committee            = { pattern = '^S[0-9]{2}$' }
+projection_source_id           = { pattern = '^S[0-9]{2}$' }
+aggregator_source_id           = { pattern = '^S[0-9]{2}$' }
+official_source_id             = { pattern = '^S[0-9]{2}$' }
+certification_source_id        = { pattern = '^S[0-9]{2}$' }
+original_source_id             = { pattern = '^S[0-9]{2}$' }
+corrected_source_id            = { pattern = '^S[0-9]{2}$', separator = ";" }
+observation_id                 = { pattern = '^OBS[0-9]{4}$', allow_blank = false }
+rating_id                      = { pattern = '^RAT[0-9]{4}$', allow_blank = false }
+validation_id                  = { pattern = '^W[0-9]{2}$', allow_blank = false }
+correction_id                  = { pattern = '^C[0-9]{2}$', allow_blank = false }
+blocker_id                     = { pattern = '^B[0-9]{2}$', allow_blank = false }
+issue_id                       = { pattern = '^U[0-9]{2}$', allow_blank = false }
+rule_id                        = { pattern = '^R[0-9]{2}$', allow_blank = false }
+check_id                       = { pattern = '^[QV][0-9]{2}$', allow_blank = false }
+v2_check_id                    = { pattern = '^Q[0-9]{2}$', allow_blank = false }
+item_id                        = { pattern = '^H[0-9]+$', allow_blank = false }
+
+# Census state FIPS codes, used to prove dim_state kept its leading zeros and
+# that every table pairs each state_postal with the right state_fips.
+[text_ids.state_fips_reference]
+AL = "01"
+AK = "02"
+AZ = "04"
+AR = "05"
+CA = "06"
+CO = "08"
+CT = "09"
+DE = "10"
+DC = "11"
+FL = "12"
+GA = "13"
+HI = "15"
+ID = "16"
+IL = "17"
+IN = "18"
+IA = "19"
+KS = "20"
+KY = "21"
+LA = "22"
+ME = "23"
+MD = "24"
+MA = "25"
+MI = "26"
+MN = "27"
+MS = "28"
+MO = "29"
+MT = "30"
+NE = "31"
+NV = "32"
+NH = "33"
+NJ = "34"
+NM = "35"
+NY = "36"
+NC = "37"
+ND = "38"
+OH = "39"
+OK = "40"
+OR = "41"
+PA = "42"
+RI = "44"
+SC = "45"
+SD = "46"
+TN = "47"
+TX = "48"
+UT = "49"
+VT = "50"
+VA = "51"
+WA = "53"
+WV = "54"
+WI = "55"
+WY = "56"

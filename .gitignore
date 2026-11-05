@@ -26,3 +26,6 @@ Thumbs.db
 ~$*
 *.tmp
 /scratch/
+
+# Test runs
+.pytest_cache/
