@@ -16,6 +16,7 @@ The interesting part of this project is not the election. It is the handling of 
 | **Observation history** | 159 append-only observations across 2 collection rounds |
 | **Campaign finance** | 619 FEC filers, joined by candidate ID and committee ID |
 | **Quality checks** | 51, each with severity, lineage and a recommended resolution |
+| **Automated tests** | 238, re-running those checks against the CSV files |
 | **Snapshot date** | 5 November 2026 — a dated research snapshot, not a live tracker |
 
 ---
@@ -44,6 +45,34 @@ Three mechanisms prevent that here.
 
 ---
 
+## Validating the model
+
+The register in `data/quality/data-quality-checks.csv` documents the checks. The suite under `tests/` makes them executable, re-running them against the CSV files themselves. It reads `data/` and never writes to it.
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+238 tests across six modules:
+
+| Module | What it enforces |
+|---|---|
+| `test_referential_integrity.py` | every foreign key resolves, including multi-value and nullable keys |
+| `test_vote_totals.py` | candidate votes sum exactly to the published race total |
+| `test_eligibility.py` | `headline_eligible` is derived from the evidence, not taken on trust |
+| `test_election_year.py` | no value from any election year other than 2026 |
+| `test_text_ids.py` | FIPS and ID columns remain text, with leading zeros intact |
+| `test_check_functions.py` | each check is shown to fail on synthetic broken data |
+
+That last module matters most. A validation suite that has never been observed failing proves nothing, so each check is exercised against data designed to break it, and the whole suite was run against a deliberately corrupted copy of `data/` — a dropped leading zero on a FIPS code, an added vote, a flipped eligibility flag, a rating marked analysis-eligible, a misspelled rater, an observation re-dated to 2024. Every break was caught and reported with its CSV line number.
+
+Each test is tagged with the check or rule ID it re-runs (`Q18`, `R02` and so on), and an unrecognized ID fails the run, so the tests and the register cannot drift apart. `config/validation.toml` holds every path, key and expected value; a new CSV or ID column that is not registered there fails the suite rather than being silently ignored.
+
+**Documented exceptions.** Five filers carry 2026-cycle reporting periods that open in October–December 2024, which is how the FEC numbers its cycles. They are allowed through by filer ID, and the suite fails if one stops matching. Odd calendar years pass, since the 2026 FEC cycle opens in January 2025; even years other than 2026 fail. Columns legitimately holding earlier years — incumbents' first-elected year, the correction register's original values, ACS 2020–2024 and Census 2020 references, and notes recording older data being rejected — are exempted individually with a written reason.
+
+---
+
 ## Repository layout
 
 ```
@@ -64,6 +93,9 @@ docs/
 powerbi/
   power-query.m            typed load script for every table
   measures.dax             72 measures, including the exclusion rules
+src/senate_validation/     one module per group of checks, callable without pytest
+tests/                     238 tests, each tagged with the check ID it re-runs
+config/validation.toml     paths, keys, expected values and documented exceptions
 scripts/
   refresh_acs_and_fec.py   fills the two layers that need an API key
 ```
