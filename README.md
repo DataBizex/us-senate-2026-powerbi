@@ -46,6 +46,7 @@ Three mechanisms prevent that here.
 - **An incumbent identity was wrong at the source.** A race table built from a June snapshot named the wrong sitting senator for South Carolina after a mid-cycle death and appointment. Three independent sources resolved it; the original value is retained in a correction register rather than overwritten.
 - **No race rating could be verified.** All 210 pre-election forecasts are quarantined — none could be confirmed at its publisher and three are contradicted by a later source. The forecast page exists but is deliberately empty.
 - **All 33 projected winners were validated individually**, six against the state's own election system. Every one agrees with the published count on the winning party.
+![The forecast page, deliberately empty](docs/screenshots/05-forecast-unavailable.png)
 
 ---
 
@@ -86,6 +87,7 @@ data/
   quality/           51 checks, model rules, corrections, validations, unresolved issues
   us-senate-2026-model.xlsx    all tables in one workbook
 docs/
+  screenshots/             the eight report pages as PNG
   build-sheet.html         pixel-level layout for all 8 report pages
   data-model-diagram.html  entity relationship diagram
   report-preview.html      visual preview of the finished report
@@ -95,6 +97,7 @@ docs/
   DATA-QUALITY.md          what passes, what fails, what is unresolved
   BUILD-GUIDE.md           how to build the Power BI report from this model
 powerbi/
+  senate-2026.pbix         the built report, data embedded
   power-query.m            typed load script for every table
   measures.dax             63 measures, including the exclusion rules
 src/senate_validation/     one module per group of checks, callable without pytest
@@ -103,6 +106,13 @@ config/validation.toml     paths, keys, expected values and documented exception
 scripts/
   refresh_acs_and_fec.py   fills the two layers that need an API key
 ```
+
+---
+## Opening the report
+
+`powerbi/senate-2026.pbix` is the built report with the data embedded. Open it in Power BI Desktop and all eight pages work immediately — no refresh, no API key, no rebuild.
+
+The steps below are for rebuilding the model from the CSV files instead.
 
 ---
 
