@@ -1,5 +1,4 @@
 # Power BI
-*.pbix
 *.pbit
 .pbi/
 *.Report/.pbi/

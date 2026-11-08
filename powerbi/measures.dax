@@ -25,7 +25,7 @@ CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
 
 Races Certified =
 CALCULATE ( DISTINCTCOUNT ( FactRaceResult[race_id] ),
-    FactRaceResult[certification_status] = "Certified" )
+    FactRaceResult[certification_status] = "Certified" ) + 0
 // Returns 0. No state had certified at collection time. Keep it on the page:
 // a visible zero is the point.
 
@@ -241,7 +241,7 @@ Ratings Total = DISTINCTCOUNT ( FactRaceRating[rating_id] )
 
 Ratings Analysis Eligible =
 CALCULATE ( DISTINCTCOUNT ( FactRaceRating[rating_id] ),
-    FactRaceRating[analysis_eligible] = "Y" )
+    FactRaceRating[analysis_eligible] = "Y" ) + 0
 
 Forecast Hit Rate =
 IF (
@@ -292,3 +292,14 @@ CALCULATE ( COUNTROWS ( DataQualityChecks ), DataQualityChecks[severity] = "High
 Report Footer =
 "Data as collected 5 November 2026. Nothing on this report is a certified election result. "
 & [Data Quality Banner]
+
+Last Updated Text = SELECTEDVALUE ( RaceQualityFlags[last_updated_display] )
+
+Source Status Text = SELECTEDVALUE ( RaceQualityFlags[status_label_display] )
+
+Vote Share (Candidate Context) =
+CALCULATE (
+    SUM ( FactCandidateResult[vote_share_pct] ),
+    CROSSFILTER ( DimRace[race_id], FactCandidateResult[race_id], NONE ),
+    USERELATIONSHIP ( DimCandidate[fec_cand_id], FactCandidateResult[fec_cand_id] )
+)

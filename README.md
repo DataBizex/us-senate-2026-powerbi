@@ -1,5 +1,7 @@
 # US Senate 2026 — election data model and Power BI report
 
+![US Senate 2026 — National Overview](docs/screenshots/01-national-overview.png)
+
 [![tests](https://github.com/DataBizex/us-senate-2026-powerbi/actions/workflows/tests.yml/badge.svg)](https://github.com/DataBizex/us-senate-2026-powerbi/actions/workflows/tests.yml)
 
 A validated data model of the **3 November 2026 United States Senate elections**, built so that incomplete, conflicting or unverified evidence cannot be mistaken for a final result.
@@ -94,7 +96,7 @@ docs/
   BUILD-GUIDE.md           how to build the Power BI report from this model
 powerbi/
   power-query.m            typed load script for every table
-  measures.dax             72 measures, including the exclusion rules
+  measures.dax             63 measures, including the exclusion rules
 src/senate_validation/     one module per group of checks, callable without pytest
 tests/                     238 tests, each tagged with the check ID it re-runs
 config/validation.toml     paths, keys, expected values and documented exceptions
